@@ -1,0 +1,6 @@
+src/test/resources/key.txt
+src/test/resources/secret.txt
+.classpath
+.project
+.settings/
+target/

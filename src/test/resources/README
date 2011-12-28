@@ -1,0 +1,4 @@
+Before running integraton tests:
+
+1) Create the file src/test/resources/key.txt, with your API key in it
+2) Create the file src/test/resources/secret.txt, with your API secret in it
