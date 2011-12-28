@@ -4,3 +4,4 @@ src/test/resources/secret.txt
 .project
 .settings/
 target/
+eclipse/
