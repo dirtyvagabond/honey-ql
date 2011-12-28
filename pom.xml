@@ -7,7 +7,7 @@
   <version>0.0.1</version>
   <packaging>jar</packaging>
 
-  <name>Vineyard Hadoop</name>
+  <name>HoneyQL</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>

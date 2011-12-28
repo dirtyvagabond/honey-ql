@@ -6,6 +6,7 @@ import jline.ConsoleReader;
 
 import com.factual.Factual;
 
+
 public class HoneyCLI {
   private final ConsoleReader consoleReader;
   private StringBuilder commandBuffer;
