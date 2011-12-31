@@ -1,4 +1,4 @@
-package com.factual.honey;
+package com.factual.honey.preprocess;
 
 public class Strs {
   public static String splice(String str, String mark1, String mark2) {

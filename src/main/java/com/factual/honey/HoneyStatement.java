@@ -3,28 +3,30 @@ package com.factual.honey;
 import com.factual.Factual;
 import com.factual.Query;
 import com.factual.ReadResponse;
+import com.factual.honey.parse.SqlParser;
+import com.factual.honey.preprocess.Strs;
 
-public class HoneyQuery {
+public class HoneyStatement {
   private final String sql;
-  private final Query apiQuery;
+  private final Query query;
   private final String tableName;
   private boolean explain;
 
-  public HoneyQuery(String honeyql) {
-    sql = preprocess(honeyql);
-    apiQuery = new Query();
-    tableName = parseInto(apiQuery);
+  public HoneyStatement(String honeyql) {
+    query = new Query();
+    sql = preprocess(honeyql, query);
+    tableName = parseInto(sql, query);
   }
 
   //TODO: support SELECT COUNT __ that gets a full_row_count (unless LIMIT'd)
   /**
    * Preprocesses Honey specific syntax out of <tt>sql</tt>.
    * <p>
-   * Modifies {@link #apiQuery} as appropriate.
+   * Modifies {@link #query} as appropriate.
    * 
    * @return the SQL statement, after taking out Honey specific syntax.
    */
-  private String preprocess(String sql) {
+  private String preprocess(String sql, Query query) {
     // EXPLAIN...
     // TODO: pretty print: http://stackoverflow.com/questions/4105795/pretty-print-json-in-java
     if(sql.startsWith("EXPLAIN ")) {
@@ -44,7 +46,7 @@ public class HoneyQuery {
       String part2 = sql.substring(near_end, sql.length());
       String near = sql.substring(near_start, near_end);
       String term = Strs.betweenSingleQuotes(near);
-      apiQuery.near(term, 4800);
+      query.near(term, 4800);
       sql = part1 + part2;
     }
 
@@ -60,15 +62,17 @@ public class HoneyQuery {
       String part2 = sql.substring(search_end, sql.length());
       String near = sql.substring(search_start, search_end);
       String term = Strs.betweenSingleQuotes(near);
-      apiQuery.search(term);
+      query.search(term);
       sql = part1 + part2;
     }
 
     return sql;
   }
 
-  private String parseInto(Query apiQuery) {
-    return SqlParser.parse(sql, apiQuery);
+  private String parseInto(String sql, Query query) {
+    SqlParser parser = new SqlParser(query);
+    parser.parse(sql);
+    return parser.getTableName();
   }
 
   public boolean isExplain() {
@@ -83,20 +87,20 @@ public class HoneyQuery {
     return tableName;
   }
 
-  public Query getApiQuery() {
-    return apiQuery;
-  }
-
   public boolean hasSelectFields() {
-    return apiQuery.getSelectFields() != null;
+    return query.getSelectFields() != null;
   }
 
   public String[] getSelectFields() {
-    return apiQuery.getSelectFields();
+    return query.getSelectFields();
   }
 
-  public ReadResponse run(Factual factual) {
-    return factual.fetch(tableName, apiQuery);
+  public ReadResponse execute(Factual factual) {
+    return factual.fetch(tableName, query);
+  }
+
+  public String getExplanation() {
+    return "Read table: " + tableName + "\n" + query.toString();
   }
 
 }

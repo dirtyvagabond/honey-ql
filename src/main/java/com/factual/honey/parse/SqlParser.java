@@ -1,4 +1,4 @@
-package com.factual.honey;
+package com.factual.honey.parse;
 
 import java.io.StringReader;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.StatementVisitor;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -27,6 +28,11 @@ import net.sf.jsqlparser.statement.update.Update;
 
 import com.factual.Query;
 
+/**
+ * Handles the main parsing of SQL.
+ * 
+ * @author aaron
+ */
 public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisitor {
   private final Query query;
   private String tableName;
@@ -36,23 +42,26 @@ public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisit
   }
 
   /**
-   * Builds out query from sql and returns table name.
+   * Parses <tt>sql</tt>, modifying {@link #query} as appropriate.
+   * Side Effect: {@link #tableName} will be defined, based on <tt>sql</tt>.
+   * 
+   * @return the name of the table specified by <tt>sql</tt>
    */
-  public static String parse(String sql, Query query) {
-    CCJSqlParserManager pm = new CCJSqlParserManager();
-    net.sf.jsqlparser.statement.Statement statement = null;
+  public String parse(String sql) {
+    Statement statement = parse(new StringReader(sql));
+    if (statement instanceof Select) {
+      statement.accept(this);
+      return tableName;
+    } else {
+      throw new IllegalArgumentException("Expected a SELECT statement");
+    }
+  }
+
+  private Statement parse(StringReader sql) {
     try {
-      statement = pm.parse(new StringReader(sql));
+      return new CCJSqlParserManager().parse(sql);
     } catch (JSQLParserException e) {
       throw new RuntimeException(e);
-    }
-    if (statement instanceof Select) {
-      Select selectStatement = (Select) statement;
-      SqlParser parser = new SqlParser(query);
-      selectStatement.accept(parser);
-      return parser.getTableName();
-    } else {
-      throw new IllegalArgumentException("need a SELECT statement");
     }
   }
 
@@ -63,41 +72,6 @@ public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisit
   @Override
   public void visit(Select sel) {
     sel.getSelectBody().accept(this);
-  }
-
-  @Override
-  public void visit(Delete arg0) {
-    System.out.println("VISIT2:" + arg0);
-  }
-
-  @Override
-  public void visit(Update arg0) {
-    System.out.println("VISIT3:" + arg0);
-  }
-
-  @Override
-  public void visit(Insert arg0) {
-    System.out.println("VISIT4:" + arg0);
-  }
-
-  @Override
-  public void visit(Replace arg0) {
-    System.out.println("VISIT5:" + arg0);
-  }
-
-  @Override
-  public void visit(Drop arg0) {
-    System.out.println("VISIT6:" + arg0);
-  }
-
-  @Override
-  public void visit(Truncate arg0) {
-    System.out.println("VISIT7:" + arg0);
-  }
-
-  @Override
-  public void visit(CreateTable arg0) {
-    System.out.println("VISIT8:" + arg0);
   }
 
   @Override
@@ -149,23 +123,58 @@ public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisit
   }
 
   @Override
-  public void visit(Union arg0) {
-    System.out.println("VISIT10:" + arg0);
-  }
-
-  @Override
   public void visit(Table table) {
     tableName = table.getName().toLowerCase();
   }
 
   @Override
   public void visit(SubSelect arg0) {
-    System.out.println("VISIT12:" + arg0);
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public void visit(SubJoin arg0) {
-    System.out.println("VISIT13:" + arg0);
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void visit(Delete arg0) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void visit(Update arg0) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void visit(Insert arg0) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void visit(Replace arg0) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void visit(Drop arg0) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void visit(Truncate arg0) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void visit(CreateTable arg0) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void visit(Union arg0) {
+    throw new UnsupportedOperationException();
   }
 
 }

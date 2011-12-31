@@ -9,6 +9,7 @@
 
   <name>HoneyQL</name>
   <url>http://maven.apache.org</url>
+  <!-- TODO: JUnit 4, scope=test -->
   <dependencies>
     <dependency>
       <groupId>com.factual</groupId>
@@ -36,6 +37,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <!-- TODO: make portable: add only Clojars repo; don't use Factual's -->
   <repositories>
     <repository>
       <id>nexus</id>

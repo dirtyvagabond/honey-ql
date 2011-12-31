@@ -108,21 +108,21 @@ public class HoneyCLI {
   }
 
   private void evaluateQuery(String sql) {
-    HoneyQuery query = new HoneyQuery(sql);
+    HoneyStatement stmt = new HoneyStatement(sql);
 
     //String sql = "SELECT * FROM PLACES WHERE (name = 'Starbucks' or name= 'Icbm') AND (locality = 'Joplin' OR locality = 'Malone')  LIMIT 10";
     //String sql = "SELECT * FROM PLACES WHERE name = 'Starbucks' or name= 'Icbm' AND locality = 'Joplin' OR locality = 'Malone' LIMIT 10";
     //String sql = "SELECT * FROM PLACES WHERE (name = 'Starbucks' or name = 'Icbm') LIMIT 10";
     //String sql = "SELECT name, tel FROM PLACES WHERE name = 'Starbucks' LIMIT 10";
 
-    if(query.isExplain()) {
-      System.out.println(query);
+    if(stmt.isExplain()) {
+      System.out.println(stmt.getExplanation());
     } else {
       ResponseFormatter formatter = new ResponseFormatter();
-      if(query.hasSelectFields()) {
-        formatter.setColumns(query.getSelectFields());
+      if(stmt.hasSelectFields()) {
+        formatter.setColumns(stmt.getSelectFields());
       }
-      System.out.println(formatter.format(query.run(factual)));
+      System.out.println(formatter.format(stmt.execute(factual)));
     }
 
   }

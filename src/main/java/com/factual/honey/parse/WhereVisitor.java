@@ -1,4 +1,4 @@
-package com.factual.honey;
+package com.factual.honey.parse;
 
 import java.util.List;
 
@@ -51,6 +51,7 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 import com.factual.FieldFilter;
 import com.factual.FilterGroup;
 import com.factual.Query;
+import com.factual.honey.preprocess.Strs;
 import com.google.common.collect.Lists;
 
 //TODO! how to handle non-String vals for right side of expression?
