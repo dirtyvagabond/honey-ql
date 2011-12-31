@@ -9,7 +9,6 @@
 
   <name>HoneyQL</name>
   <url>http://maven.apache.org</url>
-  <!-- TODO: JUnit 4, scope=test -->
   <dependencies>
     <dependency>
       <groupId>com.factual</groupId>
@@ -31,18 +30,27 @@
       <artifactId>tableformatter</artifactId>
       <version>0.96.2</version>
     </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.10</version>
+      <scope>test</scope>
+    </dependency>              
   </dependencies>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
-  <!-- TODO: make portable: add only Clojars repo; don't use Factual's -->
   <repositories>
     <repository>
-      <id>nexus</id>
-      <name>Factual nexus repository</name>
-      <url>http://maven.corp.factual.com/nexus/content/groups/public</url>
+      <id>clojars.org</id>
+      <url>http://clojars.org/repo</url>
     </repository>
   </repositories>
 
