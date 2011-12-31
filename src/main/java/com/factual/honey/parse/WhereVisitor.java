@@ -2,37 +2,15 @@ package com.factual.honey.parse;
 
 import java.util.List;
 
-import net.sf.jsqlparser.expression.AllComparisonExpression;
-import net.sf.jsqlparser.expression.AnyComparisonExpression;
 import net.sf.jsqlparser.expression.BinaryExpression;
-import net.sf.jsqlparser.expression.CaseExpression;
-import net.sf.jsqlparser.expression.DateValue;
 import net.sf.jsqlparser.expression.DoubleValue;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.ExpressionVisitor;
-import net.sf.jsqlparser.expression.Function;
-import net.sf.jsqlparser.expression.InverseExpression;
-import net.sf.jsqlparser.expression.JdbcParameter;
 import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.NullValue;
 import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.StringValue;
-import net.sf.jsqlparser.expression.TimeValue;
-import net.sf.jsqlparser.expression.TimestampValue;
-import net.sf.jsqlparser.expression.WhenClause;
-import net.sf.jsqlparser.expression.operators.arithmetic.Addition;
-import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseAnd;
-import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseOr;
-import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseXor;
-import net.sf.jsqlparser.expression.operators.arithmetic.Concat;
-import net.sf.jsqlparser.expression.operators.arithmetic.Division;
-import net.sf.jsqlparser.expression.operators.arithmetic.Multiplication;
-import net.sf.jsqlparser.expression.operators.arithmetic.Subtraction;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
-import net.sf.jsqlparser.expression.operators.relational.Between;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
-import net.sf.jsqlparser.expression.operators.relational.ExistsExpression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
@@ -41,7 +19,6 @@ import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
 import net.sf.jsqlparser.expression.operators.relational.ItemsList;
 import net.sf.jsqlparser.expression.operators.relational.ItemsListVisitor;
 import net.sf.jsqlparser.expression.operators.relational.LikeExpression;
-import net.sf.jsqlparser.expression.operators.relational.Matches;
 import net.sf.jsqlparser.expression.operators.relational.MinorThan;
 import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
@@ -51,11 +28,12 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 import com.factual.FieldFilter;
 import com.factual.FilterGroup;
 import com.factual.Query;
+import com.factual.honey.adapt.ExpressionVisitorAdapter;
 import com.factual.honey.preprocess.Strs;
 import com.google.common.collect.Lists;
 
 //TODO! how to handle non-String vals for right side of expression?
-public class WhereVisitor implements ExpressionVisitor {
+public class WhereVisitor extends ExpressionVisitorAdapter {
   private FilterGroup filters;
   private FilterGroup f;
   private final List<FilterGroup> filterStack = Lists.newArrayList();
@@ -67,93 +45,9 @@ public class WhereVisitor implements ExpressionVisitor {
   }
 
   @Override
-  public void visit(NullValue arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(Function arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(InverseExpression arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(JdbcParameter arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(DoubleValue arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(LongValue arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(DateValue arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(TimeValue arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(TimestampValue arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
   public void visit(Parenthesis p) {
     if(p.isNot()) throw new UnsupportedOperationException("Aaron has not implemented NOT, yet. :-(");
     p.getExpression().accept(this);
-  }
-
-  @Override
-  public void visit(StringValue arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(Addition arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(Division arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(Multiplication arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(Subtraction arg0) {
-    // TODO Auto-generated method stub
-
   }
 
   @Override
@@ -170,12 +64,6 @@ public class WhereVisitor implements ExpressionVisitor {
     expr.getLeftExpression().accept(this);
     expr.getRightExpression().accept(this);
     popF();
-  }
-
-  @Override
-  public void visit(Between arg0) {
-    // TODO Auto-generated method stub
-
   }
 
   @Override
@@ -196,7 +84,7 @@ public class WhereVisitor implements ExpressionVisitor {
   @Override
   public void visit(InExpression in) {
     ItemsList list = in.getItemsList();
-    final List inArgs = Lists.newArrayList();
+    final List<Object> inArgs = Lists.newArrayList();
 
     list.accept(new ItemsListVisitor() {
       @Override
@@ -265,77 +153,6 @@ public class WhereVisitor implements ExpressionVisitor {
     addFilter(expr, "$neq");
   }
 
-  @Override
-  public void visit(Column arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(SubSelect arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(CaseExpression arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(WhenClause arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(ExistsExpression arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(AllComparisonExpression arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(AnyComparisonExpression arg0) {
-    System.out.println("WhereVisitor/AnyComparisonExpression: " + arg0.toString());
-  }
-
-  @Override
-  public void visit(Concat arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(Matches arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(BitwiseAnd arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(BitwiseOr arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void visit(BitwiseXor arg0) {
-    // TODO Auto-generated method stub
-
-  }
-
   private void pushF(FilterGroup filter) {
     if(filters == null) {
       //root filter
@@ -365,7 +182,7 @@ public class WhereVisitor implements ExpressionVisitor {
     f.add(new FieldFilter(op, field, val));
   }
 
-  private void addFilter(String op, String field, List args) {
+  private void addFilter(String op, String field, List<Object> args) {
     ensureFilters();
     f.add(new FieldFilter(op, field, args));
   }
