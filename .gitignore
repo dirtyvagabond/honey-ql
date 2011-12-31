@@ -5,3 +5,4 @@ src/test/resources/secret.txt
 .settings/
 target/
 eclipse/
+eclipse_build/
