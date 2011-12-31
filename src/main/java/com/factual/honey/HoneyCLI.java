@@ -1,16 +1,18 @@
 package com.factual.honey;
 
+import java.io.File;
 import java.io.IOException;
 
 import jline.ConsoleReader;
+
+import org.apache.commons.io.FileUtils;
 
 import com.factual.Factual;
 
 
 public class HoneyCLI {
   private final ConsoleReader consoleReader;
-  private StringBuilder commandBuffer;
-  private Honey honey;
+  private Factual factual;
 
 
   public HoneyCLI() throws IOException {
@@ -24,9 +26,67 @@ public class HoneyCLI {
   }
 
   private void auth() throws IOException {
-    String key = consoleReader.readLine("API Key: ");
-    String secret = consoleReader.readLine("API Secret: ");
-    honey = new Honey(new Factual(key, secret));
+    String key;
+    String secret;
+
+    if(savedAuth()) {
+      key = readKeyFile();
+      secret = readSecretFile();
+    } else {
+      key = consoleReader.readLine("API Key: ");
+      secret = consoleReader.readLine("API Secret: ");
+      if(userWantsAuthSaved()) {
+        saveAuth(key, secret);
+      }
+    }
+    factual = new Factual(key, secret);
+  }
+
+  private boolean userWantsAuthSaved() {
+    try {
+      System.out.print("Save auth in " + honeyDir() + "? [Y/n]");
+      return consoleReader.readCharacter(new char[]{'Y', 'n'}) == 'Y';
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void saveAuth(String key, String secret) {
+    try {
+      FileUtils.forceMkdir(honeyDir());
+      FileUtils.writeStringToFile(keyFile(), key);
+      FileUtils.writeStringToFile(secretFile(), secret);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private String readSecretFile() {
+    return read(secretFile());
+  }
+
+  private String readKeyFile() {
+    return read(keyFile());
+  }
+
+  private File keyFile() {
+    return honeyUserFile("key.txt");
+  }
+
+  private File secretFile() {
+    return honeyUserFile("secret.txt");
+  }
+
+  private File honeyUserFile(String filename) {
+    return new File(honeyDir(), filename);
+  }
+
+  private File honeyDir() {
+    return new File(System.getProperty("user.home"), ".honey");
+  }
+
+  private boolean savedAuth() {
+    return keyFile().exists();
   }
 
   private void repl() {
@@ -44,17 +104,37 @@ public class HoneyCLI {
     if (line.equals("quit") || line.equals("exit")) {
       System.exit(0);
     }
+    evaluateQuery(line);
+  }
 
-    if (commandBuffer == null) {
-      commandBuffer = new StringBuilder();
+  private void evaluateQuery(String sql) {
+    HoneyQuery query = new HoneyQuery(sql);
+
+    //String sql = "SELECT * FROM PLACES WHERE (name = 'Starbucks' or name= 'Icbm') AND (locality = 'Joplin' OR locality = 'Malone')  LIMIT 10";
+    //String sql = "SELECT * FROM PLACES WHERE name = 'Starbucks' or name= 'Icbm' AND locality = 'Joplin' OR locality = 'Malone' LIMIT 10";
+    //String sql = "SELECT * FROM PLACES WHERE (name = 'Starbucks' or name = 'Icbm') LIMIT 10";
+    //String sql = "SELECT name, tel FROM PLACES WHERE name = 'Starbucks' LIMIT 10";
+
+    if(query.isExplain()) {
+      System.out.println(query);
+    } else {
+      ResponseFormatter formatter = new ResponseFormatter();
+      if(query.hasSelectFields()) {
+        formatter.setColumns(query.getSelectFields());
+      }
+      System.out.println(formatter.format(query.run(factual)));
     }
 
-    commandBuffer.append(line);
+  }
 
-    if (line.trim().endsWith(";")) {
-      String command = commandBuffer.toString();
-      commandBuffer = null;
-      honey.execute(command);
+  /**
+   * Reads value from named file in src/test/resources
+   */
+  private String read(File file) {
+    try {
+      return FileUtils.readFileToString(file).trim();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 

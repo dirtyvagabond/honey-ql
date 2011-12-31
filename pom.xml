@@ -72,19 +72,11 @@
           <workDirectory>target/assembly/work</workDirectory>
           <archive>
             <manifest>
+              <mainClass>com.factual.honey.HoneyCLI</mainClass>
               <addClasspath>true</addClasspath>
             </manifest>
           </archive>          
         </configuration>
-        <executions>
-          <execution>
-            <id>dist-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -98,6 +90,16 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <!-- dedicated dir for Eclipse so that Maven builds can't step on Eclipse's build -->
+          <outputDirectory>eclipse_build</outputDirectory>
+        </configuration>
+      </plugin>
+      
     </plugins>
   </build>
   
