@@ -79,11 +79,15 @@ public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisit
   public void visit(PlainSelect select) {
     List items = select.getSelectItems();
     if(!"*".equals(items.get(0).toString())) {
-      String[] itemsArr = new String[items.size()];
+      String[] columns = new String[items.size()];
       for(int i = 0; i<items.size(); i++) {
-        itemsArr[i] = items.get(i).toString();
+        String column = items.get(i).toString();
+        if(column.startsWith("_")) {
+          column = column.replaceFirst("_", "\\$");
+        }
+        columns[i] = column;
       }
-      query.only(itemsArr);
+      query.only(columns);
     }
 
     FromItem from = select.getFromItem();

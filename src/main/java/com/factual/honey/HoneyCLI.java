@@ -122,14 +122,7 @@ public class HoneyCLI {
   }
 
   private void evaluateQuery(String sql) {
-    System.out.println("EVALUATE " + sql + "...");
-
     HoneyStatement stmt = new HoneyStatement(sql);
-
-    //String sql = "SELECT * FROM PLACES WHERE (name = 'Starbucks' or name= 'Icbm') AND (locality = 'Joplin' OR locality = 'Malone')  LIMIT 10";
-    //String sql = "SELECT * FROM PLACES WHERE name = 'Starbucks' or name= 'Icbm' AND locality = 'Joplin' OR locality = 'Malone' LIMIT 10";
-    //String sql = "SELECT * FROM PLACES WHERE (name = 'Starbucks' or name = 'Icbm') LIMIT 10";
-    //String sql = "SELECT name, tel FROM PLACES WHERE name = 'Starbucks' LIMIT 10";
 
     if(stmt.isExplain()) {
       // TODO: pretty print: http://stackoverflow.com/questions/4105795/pretty-print-json-in-java
