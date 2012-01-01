@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import jline.ConsoleReader;
+import jline.History;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -15,10 +16,27 @@ import com.factual.honey.parse.ParseException;
 public class HoneyCLI {
   private final ConsoleReader consoleReader;
   private Factual factual;
+  private History commandHistory;
 
 
-  public HoneyCLI() throws IOException {
-    consoleReader = new ConsoleReader();
+  public HoneyCLI() {
+    try {
+      ensureHoneyDir();
+      consoleReader = new ConsoleReader();
+      controlCmdHistory();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void controlCmdHistory() {
+    try {
+      consoleReader.setUseHistory(false);
+      commandHistory = new History (new File(honeyDir(), "history"));
+      consoleReader.setHistory(commandHistory);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public static void main(String[] args) throws IOException {
@@ -57,11 +75,18 @@ public class HoneyCLI {
 
   private void saveAuth(String key, String secret) {
     try {
-      FileUtils.forceMkdir(honeyDir());
       FileUtils.writeStringToFile(keyFile(), key);
       FileUtils.writeStringToFile(secretFile(), secret);
     } catch (IOException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  private void ensureHoneyDir() {
+    try {
+      FileUtils.forceMkdir(honeyDir());
+    } catch (IOException e) {
+      //NOOP: Honey should work even w/o write access to local disk!
     }
   }
 
@@ -74,11 +99,11 @@ public class HoneyCLI {
   }
 
   private File keyFile() {
-    return honeyUserFile("key.txt");
+    return honeyUserFile("key");
   }
 
   private File secretFile() {
-    return honeyUserFile("secret.txt");
+    return honeyUserFile("secret");
   }
 
   private File honeyUserFile(String filename) {
@@ -94,10 +119,19 @@ public class HoneyCLI {
   }
 
   private void repl() {
+    StringBuilder cmdbuf = new StringBuilder();
     while (true) {
       try {
         String line = consoleReader.readLine("> ");
-        evaluateLine(line);
+        if(line.endsWith("\\")) {
+          cmdbuf.append(StringUtils.chop(line));
+        } else {
+          cmdbuf.append(line);
+          String cmd = cmdbuf.toString();
+          evaluateLine(cmd);
+          cmdbuf = new StringBuilder();
+          commandHistory.addToHistory(cmd);
+        }
       } catch (Exception e) {
         e.printStackTrace();
       }
