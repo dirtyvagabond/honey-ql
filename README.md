@@ -134,9 +134,13 @@ Find Los Angeles restaurants that have wifi or smoking:
 
 HoneyQL supports a custom search() syntax for full text searches across whole rows. For example:
 
-    > select name from places search("cafe")
+    > select name from places search('cafe')
 
-You can also target your full text search to a specific column, using <tt>like</tt> without a wildcard. For example, the following performs a Full Text Search for place names matching "starbucks":
+You can use SEARCH along with a WHERE clause. For example:
+
+    > select name from places search('cafe') where category like 'Food%'
+
+If you want to do Full Text Search for only a specific column, you use <tt>like</tt> with no wildcards. For example:
 
     > select name from places where name like 'starbucks'
 
@@ -150,7 +154,7 @@ For example, find places near Factual:
 
 This feature queries the Data Science Toolkit to do the coordinate lookup based on your address term. The query will fail if Data Science Toolkit cannot find a match. This often happens if your address text is unclear or incomplete.
 
-The NEAR filter can be used along with WHERE. For example, find restaurants near Factual that deliver dinner:
+You can use NEAR along with a WHERE clause. For example:
 
     > select name from restaurants-us near('1801 avenue of the starts, los angeles, ca') where meal_deliver = true and meal_dinner = true
 
