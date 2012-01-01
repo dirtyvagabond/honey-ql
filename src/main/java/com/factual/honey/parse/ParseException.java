@@ -5,6 +5,8 @@ import net.sf.jsqlparser.JSQLParserException;
 import org.apache.commons.lang.StringUtils;
 
 public class ParseException extends RuntimeException {
+  private int column;
+
 
   public ParseException(String msg, Throwable t) {
     super(msg, t);
@@ -12,6 +14,11 @@ public class ParseException extends RuntimeException {
 
   public ParseException(Throwable t) {
     super(t);
+  }
+
+  public ParseException(String msg, int column) {
+    super(msg);
+    this.column = column;
   }
 
   public String getFirstLineOfMessage() {

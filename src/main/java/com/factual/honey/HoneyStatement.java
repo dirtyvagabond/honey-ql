@@ -28,7 +28,10 @@ public class HoneyStatement {
    * @return the SQL statement, after taking out Honey specific syntax.
    */
   private String preprocess(String sql, Query query) {
-    return new Preprocessor(this, query).preprocess(sql);
+    Preprocessor prep = new Preprocessor();
+    String prepped = prep.preprocess(sql);
+    prep.applyTo(this, query);
+    return prepped;
   }
 
   private String parseInto(String sql, Query query) {
