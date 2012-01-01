@@ -179,7 +179,15 @@ public class WhereVisitor extends ExpressionVisitorAdapter {
     ensureFilters();
     String field = expr.getLeftExpression().toString();
     Object val = coerce(expr.getRightExpression());
+    val = stripDoubleQuotes(val);
     f.add(new FieldFilter(op, field, val));
+  }
+
+  private Object stripDoubleQuotes(Object val) {
+    if(val instanceof String && ((String) val).startsWith("\"") && ((String) val).endsWith("\"")) {
+      val = val.toString().substring(1, val.toString().length()-1);
+    }
+    return val;
   }
 
   private void addFilter(String op, String field, List<Object> args) {

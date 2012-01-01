@@ -15,15 +15,29 @@ public class Snipper {
     return new Snipper(tag, tag);
   }
 
+  public static Snipper after(String tag) {
+    return new Snipper(tag);
+  }
+
   private Snipper(String startTag, String endTag) {
     this.startTag = startTag;
     this.endTag = endTag;
   }
 
+  private Snipper(String startTag) {
+    this.startTag = startTag;
+    this.endTag = null;
+  }
+
   public Snip snip(String str) {
     int start = StringUtils.indexOfIgnoreCase(str, startTag);
 
-    if (start > -1) {
+    if(endTag == null) {
+      String first = str.substring(0, start);
+      String middle = str.substring(start);
+      String last = "";
+      return new Snip(first, middle, last);
+    } else if (start > -1) {
       int end = str.indexOf(endTag, start + startTag.length());
       if(end > -1) {
         String first = str.substring(0, start);

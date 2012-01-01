@@ -9,6 +9,24 @@ import org.junit.Test;
 public class PreprocessorTest {
 
   @Test
+  public void testTableName_noWhere() {
+    String str = "select * from restaurants-us";
+    Preprocessor prep = new Preprocessor();
+    String prepped = prep.preprocess(str);
+
+    assertEquals("select * from restaurants_us", prepped);
+  }
+
+  @Test
+  public void testTableName_where() {
+    String str = "select * from restaurants-us where name = 'star'";
+    Preprocessor prep = new Preprocessor();
+    String prepped = prep.preprocess(str);
+
+    assertEquals("select * from restaurants_us where name = 'star'", prepped);
+  }
+
+  @Test
   public void testNear() {
     String str = "select * from places nEaR ('my place') where name like 'star%'";
     Preprocessor prep = new Preprocessor();

@@ -6,6 +6,7 @@ import java.io.IOException;
 import jline.ConsoleReader;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.factual.Factual;
 import com.factual.honey.parse.ParseException;
@@ -34,8 +35,8 @@ public class HoneyCLI {
       key = readKeyFile();
       secret = readSecretFile();
     } else {
-      key = consoleReader.readLine("API Key: ");
-      secret = consoleReader.readLine("API Secret: ");
+      key = consoleReader.readLine("Your Factual API Key: ");
+      secret = consoleReader.readLine("Your Factual API Secret: ");
       if(userWantsAuthSaved()) {
         saveAuth(key, secret);
       }
@@ -46,7 +47,9 @@ public class HoneyCLI {
   private boolean userWantsAuthSaved() {
     try {
       System.out.print("Save auth in " + honeyDir() + "? [Y/n]");
-      return consoleReader.readCharacter(new char[]{'Y', 'n'}) == 'Y';
+      boolean wants = consoleReader.readCharacter(new char[]{'Y', 'n'}) == 'Y';
+      System.out.println();
+      return wants;
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -93,7 +96,7 @@ public class HoneyCLI {
   private void repl() {
     while (true) {
       try {
-        String line = consoleReader.readLine(">");
+        String line = consoleReader.readLine("> ");
         evaluateLine(line);
       } catch (Exception e) {
         e.printStackTrace();
@@ -109,11 +112,18 @@ public class HoneyCLI {
     try {
       evaluateQuery(line);
     } catch (ParseException pe) {
-      System.out.println(pe.getFirstLineOfMessage());
+      String niceMsg = pe.getFirstLineOfMessage();
+      if(StringUtils.isBlank(niceMsg)) {
+        pe.printStackTrace();
+      } else {
+        System.out.println(niceMsg);
+      }
     }
   }
 
   private void evaluateQuery(String sql) {
+    System.out.println("EVALUATE " + sql + "...");
+
     HoneyStatement stmt = new HoneyStatement(sql);
 
     //String sql = "SELECT * FROM PLACES WHERE (name = 'Starbucks' or name= 'Icbm') AND (locality = 'Joplin' OR locality = 'Malone')  LIMIT 10";
@@ -122,6 +132,7 @@ public class HoneyCLI {
     //String sql = "SELECT name, tel FROM PLACES WHERE name = 'Starbucks' LIMIT 10";
 
     if(stmt.isExplain()) {
+      // TODO: pretty print: http://stackoverflow.com/questions/4105795/pretty-print-json-in-java
       System.out.println(stmt.getExplanation());
     } else {
       ResponseFormatter formatter = new ResponseFormatter();

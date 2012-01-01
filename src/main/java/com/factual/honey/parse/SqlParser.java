@@ -123,9 +123,13 @@ public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisit
     }
   }
 
+  /**
+   * Pulls out table name, replaces # marker with -.
+   * (Parser does not take - in table names, but Factual does.)
+   */
   @Override
   public void visit(Table table) {
-    tableName = table.getName().toLowerCase();
+    tableName = table.getName().toLowerCase().replace('_', '-');
   }
 
   @Override

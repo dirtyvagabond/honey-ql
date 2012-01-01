@@ -16,7 +16,11 @@ public class Snip {
   }
 
   public String splice() {
-    return first + last;
+    return splice("");
+  }
+
+  public String splice(String str) {
+    return first + str + last;
   }
 
   @Override
