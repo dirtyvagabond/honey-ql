@@ -125,18 +125,3 @@ Same as above, plus sort by distance:
 
     > select name, _distance from restaurants-us near('1801 avenue of the starts, los angeles, ca') where meal_deliver = true and meal_dinner = true order by _distance
 
-# More Example Queries
-
-## Simplest possible SELECT statement:
-
-    > select * from places
-
-## Get a random sample of 12 Place names:
-
-    > select name from places limit 12
-
-## Full text search Places for "cafe" in Los Angeles, sort alphabetically by name
-
-    > select name, tel, locality, category from places search('cafe') where locality = 'los angeles' order by name
-
-
