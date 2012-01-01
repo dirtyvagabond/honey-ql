@@ -132,6 +132,7 @@ public class HoneyCLI {
       if(stmt.hasSelectFields()) {
         formatter.setColumns(stmt.getSelectFields());
       }
+      System.out.println();
       System.out.println(formatter.format(stmt.execute(factual)));
     }
 
