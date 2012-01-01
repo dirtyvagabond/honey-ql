@@ -46,6 +46,7 @@ public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisit
    * Side Effect: {@link #tableName} will be defined, based on <tt>sql</tt>.
    * 
    * @return the name of the table specified by <tt>sql</tt>
+   * @throws ParseException if parsing goes badly
    */
   public String parse(String sql) {
     Statement statement = parse(new StringReader(sql));
@@ -60,8 +61,8 @@ public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisit
   private Statement parse(StringReader sql) {
     try {
       return new CCJSqlParserManager().parse(sql);
-    } catch (JSQLParserException e) {
-      throw new RuntimeException(e);
+    } catch (JSQLParserException jsqlpe) {
+      throw ParseException.from(jsqlpe);
     }
   }
 

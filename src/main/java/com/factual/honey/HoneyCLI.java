@@ -8,6 +8,7 @@ import jline.ConsoleReader;
 import org.apache.commons.io.FileUtils;
 
 import com.factual.Factual;
+import com.factual.honey.parse.ParseException;
 
 
 public class HoneyCLI {
@@ -104,7 +105,12 @@ public class HoneyCLI {
     if (line.equals("quit") || line.equals("exit")) {
       System.exit(0);
     }
-    evaluateQuery(line);
+
+    try {
+      evaluateQuery(line);
+    } catch (ParseException pe) {
+      System.out.println(pe.getFirstLineOfMessage());
+    }
   }
 
   private void evaluateQuery(String sql) {
