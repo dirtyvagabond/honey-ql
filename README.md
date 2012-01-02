@@ -1,6 +1,6 @@
 # About
 
-HoneyQL is a sweet little SQL for Factual's public API. It comes with a command line interface that lets you run SQL-like query statements against all of Factual's tables.
+HoneyQL is a sweet little SQL for Factual's public API. It comes with a command line interface that lets you run SQL-like query statements against Factual's data.
 
 Here's an example of using HoneyQL to find restaurants near Factual that deliver dinner, sorted by distance:
 
@@ -41,16 +41,14 @@ Here's an example of using HoneyQL to find restaurants near Factual that deliver
 
 # Installation
 
-First you need:
+Make sure you have:
 
 * Java installed on your machine
-* A Factual API key and secret
+* A valid Factual API key and secret
 
-Then download Honey unto your machine using this link...
+[Download Honey 1.0.0](http://github.com/dirtyvagabond/honey-ql/blob/master/bin/honey_1_0_0.jar?raw=true) to your machine...
 
-[Download Honey 1.0.0](http://github.com/dirtyvagabond/honey-ql/blob/master/bin/honey_1_0_0.jar?raw=true)
-
-... and then run it like this:
+... and run it like this:
 
     java -jar honey_1_0_0.jar
 
@@ -59,9 +57,9 @@ Then download Honey unto your machine using this link...
 * SELECT
 * FROM
 * WHERE
+* ORDER BY
 * LIMIT
 * OFFSET
-* ORDER BY
 
 # HoneyQL Specific Syntax
 
