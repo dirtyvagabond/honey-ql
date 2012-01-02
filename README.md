@@ -158,7 +158,7 @@ The NEAR syntax lets you describe a place's address with free text and will atte
 
 For example, find places near Factual:
 
-    > select name from places near('1801 avenue of the starts, los angeles, ca')
+    > select name from places near('1801 avenue of the stars, los angeles, ca')
 
 This feature queries the Data Science Toolkit to do the coordinate lookup based on your address term. The query will fail if Data Science Toolkit cannot find a match. This often happens if your address text is unclear or incomplete.
 
