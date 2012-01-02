@@ -6,7 +6,7 @@ Here's an example of using HoneyQL to find restaurants near Factual that deliver
 
 <pre>
 > select name, category, price, rating, _distance \
-  from restaurants-us near('1801 avenue of the starts, los angeles, ca') \
+  from restaurants-us near('1801 avenue of the stars, los angeles, ca') \
   where meal_deliver = true and meal_dinner = true \
   order by _distance limit 12
 
@@ -164,8 +164,8 @@ This feature queries the Data Science Toolkit to do the coordinate lookup based 
 
 You can use NEAR along with a WHERE clause. For example:
 
-    > select name from restaurants-us near('1801 avenue of the starts, los angeles, ca') where meal_deliver = true and meal_dinner = true
+    > select name from restaurants-us near('1801 avenue of the stars, los angeles, ca') where meal_deliver = true and meal_dinner = true
 
 Same as above, plus sort by distance:
 
-    > select name, _distance from restaurants-us near('1801 avenue of the starts, los angeles, ca') where meal_deliver = true and meal_dinner = true order by _distance
+    > select name, _distance from restaurants-us near('1801 avenue of the stars, los angeles, ca') where meal_deliver = true and meal_dinner = true order by _distance
