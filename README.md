@@ -48,7 +48,7 @@ First you need:
 
 Then download Honey unto your machine using this link...
 
-[Download Honey 1.0.0](http://github.com/dirtyvagabond/honey-ql/blob/master/bin/honey_1_0_0.jar?raw=true}
+[Download Honey 1.0.0](http://github.com/dirtyvagabond/honey-ql/blob/master/bin/honey_1_0_0.jar?raw=true)
 
 ... and then run it like this:
 
