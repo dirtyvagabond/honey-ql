@@ -29,7 +29,7 @@ import com.factual.FieldFilter;
 import com.factual.FilterGroup;
 import com.factual.Query;
 import com.factual.honey.adapt.ExpressionVisitorAdapter;
-import com.factual.honey.preprocess.Strs;
+import com.factual.honey.preprocess.Snipper;
 import com.google.common.collect.Lists;
 
 //TODO! how to handle non-String vals for right side of expression?
@@ -122,7 +122,8 @@ public class WhereVisitor extends ExpressionVisitorAdapter {
     }
 
     String fieldName = like.getLeftExpression().toString();
-    String termWithWilds = Strs.betweenSingleQuotes(like.getRightExpression().toString());
+    String termWithWilds = Snipper.in("'").snip(like.getRightExpression().toString()).middle();
+    //String termWithWilds = Strs.betweenSingleQuotes(like.getRightExpression().toString());
     String term = termWithWilds.replace("%", "");
 
     boolean wildAtStart = termWithWilds.startsWith("%");

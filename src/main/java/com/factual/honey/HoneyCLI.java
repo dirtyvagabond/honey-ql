@@ -129,9 +129,9 @@ public class HoneyCLI {
           } else {
             cmdbuf.append(line);
             String cmd = cmdbuf.toString();
-            evaluateLine(cmd);
             cmdbuf = new StringBuilder();
             commandHistory.addToHistory(cmd);
+            evaluateLine(cmd);
           }
         }
       } catch (Exception e) {

@@ -21,6 +21,10 @@ public class ParseException extends RuntimeException {
     this.column = column;
   }
 
+  public int getColumn() {
+    return column;
+  }
+
   public String getFirstLineOfMessage() {
     if(!StringUtils.isBlank(getMessage())) {
       return getMessage().split("\n")[0];

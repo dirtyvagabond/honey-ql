@@ -77,7 +77,7 @@ public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisit
 
   @Override
   public void visit(PlainSelect select) {
-    List items = select.getSelectItems();
+    List<?> items = select.getSelectItems();
     if(!"*".equals(items.get(0).toString())) {
       String[] columns = new String[items.size()];
       for(int i = 0; i<items.size(); i++) {
@@ -110,7 +110,7 @@ public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisit
     // Parses ORDER BY
     // NOTE: $ is not legal leading char, so we use _
     //       e.g., _distance
-    List orders = select.getOrderByElements();
+    List<?> orders = select.getOrderByElements();
     if(orders != null) {
       for(Object o : orders) {
         OrderByElement sort = (OrderByElement)o;
