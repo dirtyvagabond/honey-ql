@@ -5,7 +5,10 @@ HoneyQL is a sweet little SQL for Factual's public API. It comes with a command 
 Here's an example of using HoneyQL to find restaurants near Factual that deliver dinner, sorted by distance:
 
 <pre>
-> select name, category, price, rating, _distance from restaurants-us near('1801 avenue of the starts, los angeles, ca') where meal_deliver = true and meal_dinner = true order by _distance limit 12
+> select name, category, price, rating, _distance \
+  from restaurants-us near('1801 avenue of the starts, los angeles, ca') \
+  where meal_deliver = true and meal_dinner = true \
+  order by _distance limit 12
 
 +---------------------------+-----------------------------------------+-----+------+---------+
 |name                       |category                                 |price|rating|$distance|
@@ -38,13 +41,18 @@ Here's an example of using HoneyQL to find restaurants near Factual that deliver
 
 # Installation
 
-First you will need:
+First you need:
 
 * Java installed on your machine
 * A Factual API key and secret
 
-Then download Honey unto your machine and run it like this:
-    java -jar honey.jar
+Then download Honey unto your machine using this link...
+
+[Download Honey 1.0.0](http://github.com/dirtyvagabond/honey-ql/blob/master/bin/honey_1_0_0.jar?raw=true}
+
+... and then run it like this:
+
+    java -jar honey_1_0_0.jar
 
 # Supported SQL Subset
 
