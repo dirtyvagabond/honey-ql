@@ -122,15 +122,17 @@ public class HoneyCLI {
     StringBuilder cmdbuf = new StringBuilder();
     while (true) {
       try {
-        String line = consoleReader.readLine("> ");
-        if(line.endsWith("\\")) {
-          cmdbuf.append(StringUtils.chop(line));
-        } else {
-          cmdbuf.append(line);
-          String cmd = cmdbuf.toString();
-          evaluateLine(cmd);
-          cmdbuf = new StringBuilder();
-          commandHistory.addToHistory(cmd);
+        String line = consoleReader.readLine("> ").trim();
+        if(!StringUtils.isBlank(line)) {
+          if(line.endsWith("\\")) {
+            cmdbuf.append(StringUtils.chop(line));
+          } else {
+            cmdbuf.append(line);
+            String cmd = cmdbuf.toString();
+            evaluateLine(cmd);
+            cmdbuf = new StringBuilder();
+            commandHistory.addToHistory(cmd);
+          }
         }
       } catch (Exception e) {
         e.printStackTrace();
