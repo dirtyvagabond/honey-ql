@@ -26,6 +26,8 @@ import net.sf.jsqlparser.statement.select.Union;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.factual.Query;
 
 /**
@@ -36,7 +38,16 @@ import com.factual.Query;
 public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisitor {
   private final Query query;
   private String tableName;
+  private boolean hasCountFn;
 
+  /**
+   * Constructor. Takes the <tt>query</tt> that should be modified when
+   * {@link #parse(String)} is called.
+   * 
+   * @param query
+   *          the Factual API query to modify when {@link #parse(String)}is
+   *          called.
+   */
   public SqlParser(Query query) {
     this.query = query;
   }
@@ -70,6 +81,10 @@ public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisit
     return tableName;
   }
 
+  public boolean hasCountFn() {
+    return hasCountFn;
+  }
+
   @Override
   public void visit(Select sel) {
     sel.getSelectBody().accept(this);
@@ -79,15 +94,7 @@ public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisit
   public void visit(PlainSelect select) {
     List<?> items = select.getSelectItems();
     if(!"*".equals(items.get(0).toString())) {
-      String[] columns = new String[items.size()];
-      for(int i = 0; i<items.size(); i++) {
-        String column = items.get(i).toString();
-        if(column.startsWith("_")) {
-          column = column.replaceFirst("_", "\\$");
-        }
-        columns[i] = column;
-      }
-      query.only(columns);
+      parseSelectCols(items);
     }
 
     FromItem from = select.getFromItem();
@@ -124,6 +131,36 @@ public class SqlParser implements SelectVisitor, StatementVisitor, FromItemVisit
           query.sortDesc(fieldName);
         }
       }
+    }
+  }
+
+  private void parseSelectCols(List<?> items) {
+    String[] columns = new String[items.size()];
+    for(int i = 0; i<items.size(); i++) {
+      String column = items.get(i).toString();
+      if(StringUtils.startsWithIgnoreCase(column, "count")) {
+        parseCount(column.toLowerCase());
+        return;
+      }
+      if(column.startsWith("_")) {
+        column = column.replaceFirst("_", "\\$");
+      }
+      columns[i] = column;
+    }
+    query.only(columns);
+  }
+
+  /**
+   * @param countFn
+   *          like "count(*)" or "count(tel)"
+   */
+  private void parseCount(String countFn) {
+    String col = StringUtils.substringBetween(countFn, "(", ")");
+    hasCountFn = true;
+
+    query.includeRowCount();
+    if(!"*".equals(col)) {
+      query.criteria(col).notBlank();
     }
   }
 

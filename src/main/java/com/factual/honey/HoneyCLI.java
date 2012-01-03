@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.factual.Factual;
+import com.factual.ReadResponse;
 import com.factual.honey.parse.ParseException;
 
 
@@ -163,13 +164,18 @@ public class HoneyCLI {
     if(stmt.isExplain()) {
       // TODO: pretty print: http://stackoverflow.com/questions/4105795/pretty-print-json-in-java
       System.out.println(stmt.getExplanation());
+    } else if(stmt.hasCountFn()) {
+      ResponseFormatter formatter = new ResponseFormatter();
+      ReadResponse resp = stmt.execute(factual);
+      System.out.println();
+      System.out.println(formatter.formatCount(resp));
     } else {
       ResponseFormatter formatter = new ResponseFormatter();
       if(stmt.hasSelectFields()) {
         formatter.setColumns(stmt.getSelectFields());
       }
       System.out.println();
-      System.out.println(formatter.format(stmt.execute(factual)));
+      System.out.println(formatter.formatRows(stmt.execute(factual)));
     }
 
   }

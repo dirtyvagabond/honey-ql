@@ -12,8 +12,16 @@ public class ResponseFormatter {
   private String[] columns;
 
 
+  public String formatCount(ReadResponse resp) {
+    TableFormatter tf = new SimpleTableFormatter(true);
+    tf.nextRow();
+    tf.nextCell().addLine("count");
+    tf.nextRow();
+    tf.nextCell().addLine(resp.getTotalRowCount() + "");
+    return asTextTable(tf);
+  }
 
-  public String format(ReadResponse resp) {
+  public String formatRows(ReadResponse resp) {
     if(!resp.isEmpty()) {
       List<String> columnNames = Lists.newArrayList();
       if(columns != null) {
@@ -44,14 +52,18 @@ public class ResponseFormatter {
 
       }
 
-      StringBuilder sbul = new StringBuilder();
-      for(String line : tf.getFormattedTable()) {
-        sbul.append(line).append("\n");
-      }
-      return sbul.toString();
+      return asTextTable(tf);
     } else {
       return "[No Results]\n";
     }
+  }
+
+  private String asTextTable(TableFormatter tf) {
+    StringBuilder sbul = new StringBuilder();
+    for(String line : tf.getFormattedTable()) {
+      sbul.append(line).append("\n");
+    }
+    return sbul.toString();
   }
 
   public void setColumns(String[] columns) {
