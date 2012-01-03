@@ -55,6 +55,7 @@ Make sure you have:
 # Supported SQL Subset
 
 * SELECT
+* COUNT
 * FROM
 * WHERE
 * ORDER BY
@@ -73,6 +74,26 @@ HoneyQL query statements begin with SELECT. Simple examples:
     > select * from places
 
     > select name, tel, website from restaurants-us
+
+## Limitations
+
+* GROUP BY is not supported.
+* HAVING is not supported.
+
+# COUNT
+
+You can use the COUNT clause to get a full row count, just like with traditional SQL. For example:
+
+    > select count(*) from global
+    
+You can also provide a column name, just like traditional SQL, and the COUNT will count the rows from the results where that column name is not null. For example:
+
+    > select count(website) from places where locality = 'los angeles'
+
+## Limitations
+
+* COUNT does not support any additional syntax, such as DISTINCT.
+* COUNT does not support multiple column names (but you can provide a WHERE clause to filter out nulls, like "... [COL_NAME] IS NOT NULL".
 
 # WHERE (row filters)
 
