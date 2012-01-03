@@ -11,6 +11,7 @@ public class HoneyStatement {
   private final Query query;
   private final String tableName;
   private boolean explain;
+  private boolean hasCountFn;
 
   public HoneyStatement(String honeyql) {
     query = new Query();
@@ -37,6 +38,9 @@ public class HoneyStatement {
   private String parseInto(String sql, Query query) {
     SqlParser parser = new SqlParser(query);
     parser.parse(sql);
+
+    hasCountFn = parser.hasCountFn();
+
     return parser.getTableName();
   }
 
@@ -46,6 +50,10 @@ public class HoneyStatement {
 
   public boolean isExplain() {
     return explain;
+  }
+
+  public boolean hasCountFn() {
+    return hasCountFn;
   }
 
   public String getTableName() {
