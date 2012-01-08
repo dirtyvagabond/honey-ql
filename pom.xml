@@ -13,7 +13,7 @@
     <dependency>
       <groupId>com.factual</groupId>
       <artifactId>factual-java-driver</artifactId>
-      <version>1.0</version>
+      <version>1.0.2</version>
     </dependency>
     <dependency>
       <groupId>jsqlparser</groupId>

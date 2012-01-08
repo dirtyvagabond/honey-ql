@@ -1,8 +1,8 @@
 package com.factual.honey;
 
-import com.factual.Factual;
-import com.factual.Query;
-import com.factual.ReadResponse;
+import com.factual.driver.Factual;
+import com.factual.driver.Query;
+import com.factual.driver.Tabular;
 import com.factual.honey.parse.SqlParser;
 import com.factual.honey.preprocess.Preprocessor;
 
@@ -12,14 +12,19 @@ public class HoneyStatement {
   private final String tableName;
   private boolean explain;
   private boolean hasCountFn;
+  private String describe;
 
   public HoneyStatement(String honeyql) {
     query = new Query();
     sql = preprocess(honeyql, query);
-    tableName = parseInto(sql, query);
+
+    if(isDescribe()) {
+      tableName = describe;
+    } else {
+      tableName = parseInto(sql, query);
+    }
   }
 
-  //TODO: support SELECT COUNT __ that gets a full_row_count (unless LIMIT'd)
   /**
    * Preprocesses Honey specific syntax out of <tt>sql</tt>.
    * <p>
@@ -31,8 +36,14 @@ public class HoneyStatement {
   private String preprocess(String sql, Query query) {
     Preprocessor prep = new Preprocessor();
     String prepped = prep.preprocess(sql);
-    prep.applyTo(this, query);
-    return prepped;
+
+    if(prep.hasDescribe()) {
+      describe = prep.getDescribe();
+      return "";
+    } else {
+      prep.applyTo(this, query);
+      return prepped;
+    }
   }
 
   private String parseInto(String sql, Query query) {
@@ -52,6 +63,10 @@ public class HoneyStatement {
     return explain;
   }
 
+  public boolean isDescribe() {
+    return describe != null;
+  }
+
   public boolean hasCountFn() {
     return hasCountFn;
   }
@@ -68,8 +83,12 @@ public class HoneyStatement {
     return query.getSelectFields();
   }
 
-  public ReadResponse execute(Factual factual) {
-    return factual.fetch(tableName, query);
+  public Tabular execute(Factual factual) {
+    if(isDescribe()) {
+      return factual.schema(tableName);
+    } else {
+      return factual.fetch(tableName, query);
+    }
   }
 
   public String getExplanation() {

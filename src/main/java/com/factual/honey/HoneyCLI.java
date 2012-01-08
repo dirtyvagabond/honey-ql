@@ -9,9 +9,10 @@ import jline.History;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.factual.Factual;
-import com.factual.ReadResponse;
+import com.factual.driver.Factual;
+import com.factual.driver.Tabular;
 import com.factual.honey.parse.ParseException;
+import com.google.common.collect.Lists;
 
 
 public class HoneyCLI {
@@ -47,18 +48,24 @@ public class HoneyCLI {
   }
 
   private void auth() throws IOException {
-    String key;
-    String secret;
-
     if(savedAuth()) {
-      key = readKeyFile();
-      secret = readSecretFile();
+      loadAuthFromFiles();
     } else {
-      key = consoleReader.readLine("Your Factual API Key: ");
-      secret = consoleReader.readLine("Your Factual API Secret: ");
-      if(userWantsAuthSaved()) {
-        saveAuth(key, secret);
-      }
+      getAuthFromUser();
+    }
+  }
+
+  protected void loadAuthFromFiles() {
+    String key = readKeyFile();
+    String secret = readSecretFile();
+    factual = new Factual(key, secret);
+  }
+
+  private void getAuthFromUser() throws IOException {
+    String key = consoleReader.readLine("Your Factual API Key: ");
+    String secret = consoleReader.readLine("Your Factual API Secret: ");
+    if(userWantsAuthSaved()) {
+      saveAuth(key, secret);
     }
     factual = new Factual(key, secret);
   }
@@ -147,7 +154,7 @@ public class HoneyCLI {
     }
 
     try {
-      evaluateQuery(line);
+      evaluateSql(line);
     } catch (ParseException pe) {
       String niceMsg = pe.getFirstLineOfMessage();
       if(StringUtils.isBlank(niceMsg)) {
@@ -158,24 +165,25 @@ public class HoneyCLI {
     }
   }
 
-  private void evaluateQuery(String sql) {
+  protected void evaluateSql(String sql) {
     HoneyStatement stmt = new HoneyStatement(sql);
-
     if(stmt.isExplain()) {
       // TODO: pretty print: http://stackoverflow.com/questions/4105795/pretty-print-json-in-java
       System.out.println(stmt.getExplanation());
     } else if(stmt.hasCountFn()) {
-      ResponseFormatter formatter = new ResponseFormatter();
-      ReadResponse resp = stmt.execute(factual);
-      System.out.println();
-      System.out.println(formatter.formatCount(resp));
+      TabularFormatter formatter = new TabularFormatter();
+      System.out.println(formatter.formatCount(stmt.execute(factual)));
     } else {
-      ResponseFormatter formatter = new ResponseFormatter();
-      if(stmt.hasSelectFields()) {
-        formatter.setColumns(stmt.getSelectFields());
+      Tabular table = stmt.execute(factual);
+      TabularFormatter formatter = new TabularFormatter();
+
+      if(stmt.isDescribe()) {
+        formatter.setFirstColumn("name");
+      } else if(stmt.hasSelectFields()) {
+        formatter.setColumns(Lists.newArrayList(stmt.getSelectFields()));
       }
       System.out.println();
-      System.out.println(formatter.formatRows(stmt.execute(factual)));
+      System.out.println(formatter.format(table));
     }
 
   }

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.factual.Query;
+import com.factual.driver.Query;
 
 
 public class SqlParserTest {

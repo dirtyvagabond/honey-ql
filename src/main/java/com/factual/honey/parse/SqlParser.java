@@ -28,7 +28,7 @@ import net.sf.jsqlparser.statement.update.Update;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.factual.Query;
+import com.factual.driver.Query;
 
 /**
  * Handles the main parsing of SQL.
