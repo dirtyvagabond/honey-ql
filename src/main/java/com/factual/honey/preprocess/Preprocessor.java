@@ -2,22 +2,46 @@ package com.factual.honey.preprocess;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.factual.Query;
+import com.factual.driver.Query;
 import com.factual.honey.HoneyStatement;
 
-
+/**
+ * Knows how to preprocess an SQL query statement. Main purpose is to recognize
+ * and pull out Honey specific query syntax.
+ * 
+ * @author aaron
+ */
 public class Preprocessor {
   protected String near;
   protected String search;
   protected boolean explain;
+  private String describe;
 
 
   public String preprocess(String sql) {
-    sql = prepExplain(sql);
-    sql = prepNear(sql);
-    sql = prepSearch(sql);
-    sql = prepTableName(sql);
-    return sql;
+    if(StringUtils.startsWithIgnoreCase(sql, "describe")) {
+      describe = parseDescribe(sql);
+      return "";
+    } else {
+      sql = prepExplain(sql);
+      sql = prepNear(sql);
+      sql = prepSearch(sql);
+      sql = prepTableName(sql);
+      return sql;
+    }
+  }
+
+  public boolean hasDescribe() {
+    return describe != null;
+  }
+
+  public String getDescribe() {
+    return describe;
+  }
+
+  private String parseDescribe(String sql) {
+    String table = sql.substring(8);
+    return table.trim();
   }
 
   //Parser does not take - in table names, but Factual does.

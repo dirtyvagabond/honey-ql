@@ -4,7 +4,7 @@
 
   <groupId>factual</groupId>
   <artifactId>honey</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <packaging>jar</packaging>
 
   <name>HoneyQL</name>
@@ -13,7 +13,7 @@
     <dependency>
       <groupId>com.factual</groupId>
       <artifactId>factual-java-driver</artifactId>
-      <version>1.0</version>
+      <version>1.1.0</version>
     </dependency>
     <dependency>
       <groupId>jsqlparser</groupId>

@@ -56,4 +56,15 @@ public class PreprocessorTest {
     assertTrue(prep.explain);
   }
 
+  @Test
+  public void testDescribe() {
+    String str = "dEsCrIbE  restaurants-us  ";
+    Preprocessor prep = new Preprocessor();
+    String prepped = prep.preprocess(str);
+
+    assertTrue(prep.hasDescribe());
+    assertEquals("restaurants-us", prep.getDescribe());
+    assertEquals("", prepped);
+  }
+
 }

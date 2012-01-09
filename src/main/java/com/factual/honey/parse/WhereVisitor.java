@@ -25,9 +25,9 @@ import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
-import com.factual.FieldFilter;
-import com.factual.FilterGroup;
-import com.factual.Query;
+import com.factual.driver.FieldFilter;
+import com.factual.driver.FilterGroup;
+import com.factual.driver.Query;
 import com.factual.honey.adapt.ExpressionVisitorAdapter;
 import com.factual.honey.preprocess.Snipper;
 import com.google.common.collect.Lists;
