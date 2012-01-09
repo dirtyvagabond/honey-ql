@@ -77,6 +77,7 @@ HoneyQL query statements begin with SELECT. Simple examples:
 
 ## Limitations
 
+* The amount of results returned will be limited by Factual's API, based on your account with Factual.
 * GROUP BY is not supported.
 * HAVING is not supported.
 
