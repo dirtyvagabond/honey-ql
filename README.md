@@ -2,41 +2,26 @@
 
 HoneyQL is a sweet little SQL for Factual's public API. It comes with a command line interface that lets you run SQL-like query statements against Factual's data.
 
-Here's an example of using HoneyQL to find restaurants near Factual that deliver dinner, sorted by distance:
+Here's an example of using HoneyQL to find a few restaurant owners offering wifi, in descending order of their price rating, and including their attire:
 
+````
+> SELECT name, owner, price, attire \
+  FROM restaurants-us \
+  WHERE locality = 'los angeles' \
+  AND owner IS NOT NULL \
+  AND wifi = true \
+  ORDER BY price DESC LIMIT 3
+````
 <pre>
-> select name, category, price, rating, _distance \
-  from restaurants-us near('1801 avenue of the stars, los angeles, ca') \
-  where meal_deliver = true and meal_dinner = true \
-  order by _distance limit 12
-
-+---------------------------+-----------------------------------------+-----+------+---------+
-|name                       |category                                 |price|rating|$distance|
-+---------------------------+-----------------------------------------+-----+------+---------+
-|Johnnie's New York Pizzeria|Food & Beverage > Restaurants > Pizza    |2    |2.5   |253.5255 |
-+---------------------------+-----------------------------------------+-----+------+---------+
-|Take A Bao                 |Food & Beverage > Restaurants            |2    |4.0   |343.15497|
-+---------------------------+-----------------------------------------+-----+------+---------+
-|Stand                      |Food & Beverage > Restaurants > Fast Food|1    |3.5   |375.0205 |
-+---------------------------+-----------------------------------------+-----+------+---------+
-|Habanero Grill             |Food & Beverage > Restaurants            |2    |4.0   |468.32678|
-+---------------------------+-----------------------------------------+-----+------+---------+
-|Cuvee                      |Food & Beverage > Restaurants            |2    |2.0   |468.32678|
-+---------------------------+-----------------------------------------+-----+------+---------+
-|Joss Cuisine               |Food & Beverage > Restaurants            |4    |4.5   |696.335  |
-+---------------------------+-----------------------------------------+-----+------+---------+
-|Roni's Diner               |Food & Beverage > Restaurants            |2    |4.0   |731.27856|
-+---------------------------+-----------------------------------------+-----+------+---------+
-|Subway                     |Food & Beverage > Restaurants > Fast Food|null |2.0   |752.7942 |
-+---------------------------+-----------------------------------------+-----+------+---------+
-|Ingrid's                   |Food & Beverage > Restaurants            |2    |4.5   |887.0573 |
-+---------------------------+-----------------------------------------+-----+------+---------+
-|Cool Basil                 |Food & Beverage > Restaurants            |2    |4.0   |1123.901 |
-+---------------------------+-----------------------------------------+-----+------+---------+
-|IL Forno Caldo             |Food & Beverage > Restaurants            |2    |4.0   |1291.0625|
-+---------------------------+-----------------------------------------+-----+------+---------+
-|Cafe Modilani              |Food & Beverage > Restaurants            |2    |3.5   |1312.0791|
-+---------------------------+-----------------------------------------+-----+------+---------+
++---------------+--------------+-----+------------+
+|name           |owner         |price|attire      |
++---------------+--------------+-----+------------+
+|Tower Bar      |Jeff Klein    |5    |smart casual|
++---------------+--------------+-----+------------+
+|Asia Restaurant|Bobby Owsinski|3    |null        |
++---------------+--------------+-----+------------+
+|Boardners      |Tricia La     |3    |casual      |
++---------------+--------------+-----+------------+
 </pre>
 
 # Installation
@@ -61,6 +46,7 @@ Make sure you have:
 * ORDER BY
 * LIMIT
 * OFFSET
+* DESCRIBE
 
 # HoneyQL Specific Syntax
 
@@ -158,7 +144,7 @@ Find Los Angeles restaurants that have wifi or smoking:
 
     > select name, wifi, smoking from restaurants-us where locality = 'Los Angeles' and (wifi = true or smoking = true) 
 
-# Full Text Search (SEARCH)
+# SEARCH (Full Text Search)
 
 HoneyQL supports a custom search() syntax for full text searches across whole rows. For example:
 
@@ -172,7 +158,7 @@ If you want to do Full Text Search for only a specific column, you use <tt>like<
 
     > select name from places where name like 'starbucks'
 
-# Geo Proximity Filter (NEAR)
+# NEAR (Geo Proximity Filter)
 
 The NEAR syntax lets you describe a place's address with free text and will attempt to locate that place then find places near to it.
 
@@ -189,3 +175,11 @@ You can use NEAR along with a WHERE clause. For example:
 Same as above, plus sort by distance:
 
     > select name, _distance from restaurants-us near('1801 avenue of the stars, los angeles, ca') where meal_deliver = true and meal_dinner = true order by _distance
+
+# DESCRIBE (view schema)
+
+You can see the full schema of any table by using <tt>DESCRIBE [TABLE_NAME]</tt>, like this:
+
+````
+DESCRIBE restaurants-us
+````
