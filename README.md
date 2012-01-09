@@ -46,6 +46,7 @@ Make sure you have:
 * ORDER BY
 * LIMIT
 * OFFSET
+* DESCRIBE
 
 # HoneyQL Specific Syntax
 
@@ -143,7 +144,7 @@ Find Los Angeles restaurants that have wifi or smoking:
 
     > select name, wifi, smoking from restaurants-us where locality = 'Los Angeles' and (wifi = true or smoking = true) 
 
-# Full Text Search (SEARCH)
+# SEARCH (Full Text Search)
 
 HoneyQL supports a custom search() syntax for full text searches across whole rows. For example:
 
@@ -157,7 +158,7 @@ If you want to do Full Text Search for only a specific column, you use <tt>like<
 
     > select name from places where name like 'starbucks'
 
-# Geo Proximity Filter (NEAR)
+# NEAR (Geo Proximity Filter)
 
 The NEAR syntax lets you describe a place's address with free text and will attempt to locate that place then find places near to it.
 
@@ -174,3 +175,11 @@ You can use NEAR along with a WHERE clause. For example:
 Same as above, plus sort by distance:
 
     > select name, _distance from restaurants-us near('1801 avenue of the stars, los angeles, ca') where meal_deliver = true and meal_dinner = true order by _distance
+
+# DESCRIBE (view schema)
+
+You can see the full schema of any table by using <tt>DESCRIBE [TABLE_NAME]</tt>, like this:
+
+````
+DESCRIBE restaurants-us
+````
