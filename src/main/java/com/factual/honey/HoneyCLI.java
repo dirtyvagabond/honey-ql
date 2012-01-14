@@ -168,24 +168,32 @@ public class HoneyCLI {
   protected void evaluateSql(String sql) {
     HoneyStatement stmt = new HoneyStatement(sql);
     if(stmt.isExplain()) {
-      // TODO: pretty print: http://stackoverflow.com/questions/4105795/pretty-print-json-in-java
-      System.out.println(stmt.getExplanation());
-    } else if(stmt.hasCountFn()) {
-      TabularFormatter formatter = new TabularFormatter();
-      System.out.println(formatter.formatCount(stmt.execute(factual)));
+      printExplain(stmt);
     } else {
-      Tabular table = stmt.execute(factual);
-      TabularFormatter formatter = new TabularFormatter();
-
-      if(stmt.isDescribe()) {
-        formatter.setFirstColumn("name");
-      } else if(stmt.hasSelectFields()) {
-        formatter.setColumns(Lists.newArrayList(stmt.getSelectFields()));
-      }
-      System.out.println();
-      System.out.println(formatter.format(table));
+      printResults(stmt);
     }
 
+  }
+
+  private void printResults(HoneyStatement stmt) {
+    // Print out query results (rows and columns)
+    Tabular table = stmt.execute(factual);
+    TabularFormatter formatter = new TabularFormatter();
+
+    if(stmt.isDescribe()) {
+      formatter.setFirstColumn("name");
+    } else if(stmt.hasSelectFields()) {
+      formatter.setColumns(Lists.newArrayList(stmt.getSelectFields()));
+    }
+
+    System.out.println();
+    System.out.println(formatter.format(table));
+  }
+
+  private void printExplain(HoneyStatement stmt) {
+    // Print out explanation of query
+    // TODO: pretty print: http://stackoverflow.com/questions/4105795/pretty-print-json-in-java
+    System.out.println(stmt.getExplanation());
   }
 
   /**

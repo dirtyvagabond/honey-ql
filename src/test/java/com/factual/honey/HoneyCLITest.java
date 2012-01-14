@@ -10,8 +10,9 @@ public class HoneyCLITest {
     HoneyCLI cli = new HoneyCLI();
     cli.loadAuthFromFiles();
 
-    String sql = "describe restaurants-us";
-    //String sql = "select * from places";
+    //String sql = "describe restaurants-us";
+    //String sql = "select name, website from places";
+    String sql = "select count(website) from places";
 
     cli.evaluateSql(sql);
   }
