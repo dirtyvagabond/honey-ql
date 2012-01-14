@@ -1,17 +1,23 @@
 package com.factual.honey;
 
+import java.util.List;
+import java.util.Map;
+
 import com.factual.driver.Factual;
 import com.factual.driver.Query;
+import com.factual.driver.ReadResponse;
 import com.factual.driver.Tabular;
 import com.factual.honey.parse.SqlParser;
 import com.factual.honey.preprocess.Preprocessor;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class HoneyStatement {
   private final String sql;
   private final Query query;
   private final String tableName;
   private boolean explain;
-  private boolean hasCountFn;
+  private boolean isCount;
   private String describe;
 
   public HoneyStatement(String honeyql) {
@@ -50,7 +56,7 @@ public class HoneyStatement {
     SqlParser parser = new SqlParser(query);
     parser.parse(sql);
 
-    hasCountFn = parser.hasCountFn();
+    isCount = parser.hasCountFn();
 
     return parser.getTableName();
   }
@@ -67,8 +73,8 @@ public class HoneyStatement {
     return describe != null;
   }
 
-  public boolean hasCountFn() {
-    return hasCountFn;
+  public boolean isCount() {
+    return isCount;
   }
 
   public String getTableName() {
@@ -83,12 +89,36 @@ public class HoneyStatement {
     return query.getSelectFields();
   }
 
+  /**
+   * Executes this Statement against Factual and returns the results as Tabular
+   * data.
+   */
   public Tabular execute(Factual factual) {
     if(isDescribe()) {
       return factual.schema(tableName);
+    } else if(isCount()){
+      return countResult(factual);
     } else {
       return factual.fetch(tableName, query);
     }
+  }
+
+  private Tabular countResult(final Factual factual) {
+    return new Tabular(){
+      @Override
+      public List<Map<String, Object>> getData() {
+        return makeCountData(factual);
+      }};
+  }
+
+  private List<Map<String, Object>> makeCountData(Factual factual) {
+    // query should already have "count all rows" set
+    ReadResponse resp = factual.fetch(tableName, query);
+    final List<Map<String, Object>> countData = Lists.newArrayList();
+    Map<String, Object> cell = Maps.newHashMap();
+    cell.put("count", resp.getTotalRowCount());
+    countData.add(cell);
+    return countData;
   }
 
   public String getExplanation() {
