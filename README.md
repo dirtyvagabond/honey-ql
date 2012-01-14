@@ -31,11 +31,11 @@ Make sure you have:
 * Java installed on your machine
 * A valid Factual API key and secret
 
-[Download Honey 1.0.2](http://github.com/dirtyvagabond/honey-ql/blob/master/bin/honey_1_0_2.jar?raw=true) to your machine...
+[Download Honey 1.0.3](http://github.com/dirtyvagabond/honey-ql/blob/master/bin/honey_1_0_3.jar?raw=true) to your machine...
 
 ... and run it like this:
 
-    java -jar honey_1_0_2.jar
+    java -jar honey_1_0_3.jar
 
 # Supported SQL Subset
 
